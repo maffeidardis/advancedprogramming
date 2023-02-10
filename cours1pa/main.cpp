@@ -67,11 +67,6 @@ int main(void) {
     printMatrix(B,M,P);
     double **C = alloc(M,P);
     printMatrix(C,M,P);
-    
-    
-    
-    
-    
     mul(A,B,C,M,N,P);
     return 0;
 }
