@@ -6,8 +6,8 @@
 //  Copyright © 2023 Thiago Petrilli Maffei Dardis. All rights reserved.
 //
 
-#ifndef base_h
-#define base_h
+#pragma once
 
-
-#endif /* base_h */
+#define DEFAULT_PORT        25000
+#define NUM_SERVERS         1
+#define NUM_THREADS         4
