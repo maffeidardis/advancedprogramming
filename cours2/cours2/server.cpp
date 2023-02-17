@@ -64,18 +64,23 @@ void * hconnect (void * fd)
     int f = *((int *)fd);
     
     //Reading the matrix dimensions from the client
-    int N,P,L;
+    int N,P,l1,l2;
     read(f, &N, sizeof(int));
-    read(f, &P, sizeof(int));
-    read(f, &L, sizeof(int));
+    read(f, &P, sizeof(int));    
+    read(f, &l1, sizeof(int));
+    read(f, &l2, sizeof(int));
+    int L = l2 - l1;
+
+    std::cout<<l1<<" "<<l2<<std::endl;
 
     //Allocating the matrix A
     double **A = alloc(L,N);
-    for (int j =0; j<L; j++){
-        for (int k=0; k<N; k++){
+    for (int j = l1; j < l2; j++){
+        for (int k=0; k < N; k++){
             read(f, &A[j][k], sizeof(double));
         }
     }
+    printMatrix(A,L,N);
 
     //Allocating the matrix B
     double **B = alloc(N,P);
@@ -90,18 +95,16 @@ void * hconnect (void * fd)
     mul(A,B,C,L,N,P);
 
     //Sending matrix C
-    for (int j =0; j<L; j++){
+    for (int j = l1; j<l2; j++){
         for (int k=0; k<N; k++){
             write(f, &C[j][k], sizeof(double));
         }
     }
 
-    printMatrix(C,L,P);
-    
+    printMatrix(C,L,P);    
     close(f);
     
     free(fd);
-    pthread_detach(pthread_self());
     return NULL;
 }
 
