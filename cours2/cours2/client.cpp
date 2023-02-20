@@ -13,6 +13,7 @@
 #include <iostream>
 #include "base.h"
 #include <pthread.h>
+#include <unistd.h>
 
 double ** alloc(int M, int N=1){
     double **p = new double*[M];
@@ -110,11 +111,10 @@ void * request (void* args){
     write(s, &(p->l1), sizeof(int));
     write(s, &(p->l2), sizeof(int));
 
-    for (int j = p->l1; j<p->l2; j++){
-        for (int k = 0; k<p->N; k++){
-            write(s, &(p->A[j][k]), sizeof(double));
-        }
+    for (int j = p->l1; j < p->l2; j++) {
+        write(s, &(p->A[j][0]), p->N * sizeof(double));
     }
+
 
     //int L = p->l2 - p->l1;
 
@@ -126,8 +126,8 @@ void * request (void* args){
     }
 
     //Receiving matrix C   
-    for (int j = p->l1; j<p->l2; j++){
-        for (int k = 0; k<p->N; k++){
+    for (int j = p->l1; j < p->l2; j++) {
+        for (int k = 0; k < p->N; k++) {
             read(s, &(p->C[j][k]), sizeof(double));
         }
     }
@@ -154,7 +154,7 @@ int main (int argc, char * argv[])
     double **A = alloc(M,N);
     double **B = alloc(N,P);
     double **C = alloc(M,P);
-
+    
     int r = M % NUM_SERVERS;
     int l1 = 0, L;
     int l2 = M / NUM_SERVERS + r;
@@ -177,6 +177,9 @@ int main (int argc, char * argv[])
         if (rc != 0) {
             std::cerr << "err creating pthread" << std::endl;
         }
+
+        //sleep(2); 
+        // sleep for 2 seconds before creating next thread
         l1 = l2;
         l2 += M / NUM_SERVERS;
 
@@ -186,7 +189,7 @@ int main (int argc, char * argv[])
         pthread_join(threads[i], NULL);
     }
 
-    printMatrix(C,M,N);
+    printMatrix(C,M,P);
 
     return 0;
 }

@@ -71,16 +71,13 @@ void * hconnect (void * fd)
     read(f, &l2, sizeof(int));
     int L = l2 - l1;
 
-    std::cout<<l1<<" "<<l2<<std::endl;
-
     //Allocating the matrix A
     double **A = alloc(L,N);
-    for (int j = l1; j < l2; j++){
+    for (int j = 0; j < L; j++){
         for (int k=0; k < N; k++){
             read(f, &A[j][k], sizeof(double));
         }
     }
-    printMatrix(A,L,N);
 
     //Allocating the matrix B
     double **B = alloc(N,P);
@@ -95,8 +92,8 @@ void * hconnect (void * fd)
     mul(A,B,C,L,N,P);
 
     //Sending matrix C
-    for (int j = l1; j<l2; j++){
-        for (int k=0; k<N; k++){
+    for (int j = 0; j<L; j++){
+        for (int k=0; k<N; k++){            
             write(f, &C[j][k], sizeof(double));
         }
     }

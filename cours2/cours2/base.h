@@ -9,5 +9,5 @@
 #pragma once
 
 #define DEFAULT_PORT        25000
-#define NUM_SERVERS         2
+#define NUM_SERVERS         6
 #define NUM_THREADS         4
